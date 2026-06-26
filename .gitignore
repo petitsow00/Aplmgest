@@ -1,0 +1,6 @@
+node_modules/
+dist/
+companies/
+aplmgest_platform.db
+*.db
+.env

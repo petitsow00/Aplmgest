@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APLMGEST — Connexion</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;background:linear-gradient(135deg,#0d2137 0%,#185FA5 100%);display:flex;align-items:center;justify-content:center;min-height:100vh}
+.card{background:#fff;border-radius:16px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.brand{text-align:center;margin-bottom:28px}
+.brand-icon{width:56px;height:56px;background:linear-gradient(135deg,#185FA5,#0C447C);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px}
+.brand h1{font-size:22px;font-weight:800;color:#1a1a1a;letter-spacing:-.5px}
+.brand p{font-size:12px;color:#9b9b9b;margin-top:3px}
+h2{font-size:17px;font-weight:700;color:#1a1a1a;margin-bottom:4px;text-align:center}
+.sub{font-size:12.5px;color:#6b6b6b;text-align:center;margin-bottom:22px}
+.fg{margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:600;color:#6b6b6b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+input,select{width:100%;padding:10px 13px;border:1.5px solid #e0e0e0;border-radius:9px;font-size:14px;color:#1a1a1a;outline:none;font-family:inherit;background:#fff;transition:border-color .15s}
+input:focus,select:focus{border-color:#185FA5;box-shadow:0 0 0 3px rgba(24,95,165,.1)}
+.btn{width:100%;padding:11px;background:#185FA5;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px;transition:background .15s;letter-spacing:.2px}
+.btn:hover{background:#0C447C}
+.btn-back{background:none;border:1.5px solid #e0e0e0;color:#6b6b6b;margin-top:8px;font-weight:500}
+.btn-back:hover{background:#f5f5f5;border-color:#c0c0c0}
+.err{background:#FCEBEB;color:#A32D2D;border:1px solid #F7C1C1;border-radius:8px;padding:9px 13px;font-size:13px;margin-bottom:14px;display:none}
+.divider{display:flex;align-items:center;gap:10px;margin:18px 0}
+.divider hr{flex:1;border:none;border-top:1px solid #e0e0e0}
+.divider span{font-size:11px;color:#bbb;white-space:nowrap}
+.level-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+.lbtn{border:1.5px solid #e0e0e0;border-radius:10px;padding:16px 10px;cursor:pointer;text-align:center;transition:all .15s;background:#fff}
+.lbtn:hover{border-color:#185FA5;background:#f0f6ff}
+.lbtn.selected{border-color:#185FA5;background:#e6f1fb}
+.lbtn .li{font-size:24px;margin-bottom:6px}
+.lbtn .lt{font-size:12px;font-weight:700;color:#1a1a1a}
+.lbtn .ld{font-size:11px;color:#9b9b9b;margin-top:2px}
+.step{display:none}
+.step.active{display:block}
+.footer{text-align:center;font-size:11px;color:#c0c0c0;margin-top:18px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#E6F1FB;color:#185FA5;letter-spacing:.3px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">
+    <div class="brand-icon">✈</div>
+    <h1>APLMGEST</h1>
+    <p>Plateforme de gestion professionnelle</p>
+  </div>
+
+  <div id="errMsg" class="err"></div>
+
+  <!-- ÉTAPE 0 : Choisir le niveau -->
+  <div class="step active" id="step0">
+    <h2>Bienvenue</h2>
+    <p class="sub">Choisissez votre type d'accès</p>
+    <div class="level-btns">
+      <div class="lbtn" id="btn-sa" onclick="selectLevel('superadmin')">
+        <div class="li">🛡️</div>
+        <div class="lt">Super Admin</div>
+        <div class="ld">Plateforme APLMGEST</div>
+      </div>
+      <div class="lbtn" id="btn-ent" onclick="selectLevel('entreprise')">
+        <div class="li">🏢</div>
+        <div class="lt">Mon Entreprise</div>
+        <div class="ld">Espace client</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 1a : Connexion Super Admin -->
+  <div class="step" id="step1a">
+    <span class="badge">🛡️ SUPER ADMINISTRATEUR</span>
+    <h2>Connexion Super Admin</h2>
+    <p class="sub">Accès réservé au propriétaire de la plateforme</p>
+    <form id="formSA">
+      <div class="fg"><label>Pseudo</label><input type="text" id="sa_pseudo" placeholder="superadmin" autocomplete="username"></div>
+      <div class="fg"><label>Mot de passe</label><input type="password" id="sa_mdp" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn" type="submit">Accéder à la plateforme</button>
+      <button class="btn btn-back" type="button" onclick="goStep('step0')">← Retour</button>
+    </form>
+  </div>
+
+  <!-- ÉTAPE 1b : Choisir l'entreprise -->
+  <div class="step" id="step1b">
+    <span class="badge">🏢 ESPACE ENTREPRISE</span>
+    <h2>Sélectionner votre entreprise</h2>
+    <p class="sub">Choisissez votre espace de travail</p>
+    <div class="fg">
+      <label>Entreprise</label>
+      <select id="sel_ent">
+        <option value="">— Chargement... —</option>
+      </select>
+    </div>
+    <button class="btn" type="button" onclick="goSelectEntreprise()">Continuer →</button>
+    <button class="btn btn-back" type="button" onclick="goStep('step0')">← Retour</button>
+  </div>
+
+  <!-- ÉTAPE 2 : Connexion utilisateur entreprise -->
+  <div class="step" id="step2">
+    <span class="badge" id="ent_badge">🏢</span>
+    <h2>Connexion</h2>
+    <p class="sub">Accédez à votre espace de travail</p>
+    <form id="formUser">
+      <div class="fg"><label>Pseudo</label><input type="text" id="u_pseudo" placeholder="Votre identifiant" autocomplete="username"></div>
+      <div class="fg"><label>Mot de passe</label><input type="password" id="u_mdp" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn" type="submit">Se connecter</button>
+      <button class="btn btn-back" type="button" onclick="goStep('step1b')">← Retour</button>
+    </form>
+  </div>
+
+  <p class="footer">APLMGEST v1.0 — Tous droits réservés</p>
+  <div style="text-align:center;margin-top:10px">
+    <button onclick="verifierMaj()" style="background:none;border:none;color:#aaa;font-size:11px;cursor:pointer;text-decoration:underline;font-family:inherit">Vérifier les mises à jour</button>
+  </div>
+  <div id="maj-box" style="display:none;margin-top:14px;border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.6"></div>
+</div>
+<script>
+var dbPlatform = null;
+var dbCompany = null;
+var selectedSlug = null;
+
+try { dbPlatform = require('./db-platform'); } catch(e) { showErr("Erreur db-platform : " + e.message); }
+try { dbCompany = require('./db-company'); } catch(e) { showErr("Erreur db-company : " + e.message); }
+
+function showErr(msg) {
+  var el = document.getElementById('errMsg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideErr() {
+  document.getElementById('errMsg').style.display = 'none';
+}
+function goStep(id) {
+  hideErr();
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+function selectLevel(level) {
+  document.querySelectorAll('.lbtn').forEach(function(b){ b.classList.remove('selected'); });
+  if (level === 'superadmin') {
+    document.getElementById('btn-sa').classList.add('selected');
+    goStep('step1a');
+    document.getElementById('sa_pseudo').focus();
+  } else {
+    document.getElementById('btn-ent').classList.add('selected');
+    loadEntreprises();
+    goStep('step1b');
+  }
+}
+
+function loadEntreprises() {
+  var sel = document.getElementById('sel_ent');
+  sel.innerHTML = '<option value="">— Sélectionnez votre entreprise —</option>';
+  if (!dbPlatform) return;
+  try {
+    var liste = dbPlatform.getActiveEntreprises();
+    if (liste.length === 0) {
+      sel.innerHTML = '<option value="">Aucune entreprise disponible</option>';
+    } else {
+      liste.forEach(function(e) {
+        var opt = document.createElement('option');
+        opt.value = e.slug;
+        opt.textContent = e.nom;
+        sel.appendChild(opt);
+      });
+    }
+  } catch(e) { showErr("Erreur chargement entreprises : " + e.message); }
+}
+
+function goSelectEntreprise() {
+  hideErr();
+  var sel = document.getElementById('sel_ent');
+  var slug = sel.value;
+  if (!slug) { showErr("Veuillez sélectionner votre entreprise."); return; }
+  selectedSlug = slug;
+  var nom = sel.options[sel.selectedIndex].textContent;
+  document.getElementById('ent_badge').textContent = '🏢 ' + nom.toUpperCase();
+  goStep('step2');
+  document.getElementById('u_pseudo').focus();
+}
+
+// Connexion Super Admin
+document.getElementById('formSA').addEventListener('submit', function(e) {
+  e.preventDefault();
+  hideErr();
+  if (!dbPlatform) { showErr("Module plateforme non chargé."); return; }
+  var pseudo = document.getElementById('sa_pseudo').value.trim();
+  var mdp = document.getElementById('sa_mdp').value;
+  if (!pseudo || !mdp) { showErr("Veuillez remplir tous les champs."); return; }
+  try {
+    var sa = dbPlatform.verifySuperAdmin(pseudo, mdp);
+    if (!sa) { showErr("Identifiants incorrects ou compte inactif."); return; }
+    localStorage.setItem('aplmgest_session', JSON.stringify({
+      type: 'superadmin',
+      id: sa.id,
+      pseudo: sa.pseudo,
+      nom_complet: sa.nom_complet,
+      email: sa.email
+    }));
+    window.location.href = 'super-admin.html';
+  } catch(e) { showErr("Erreur : " + e.message); }
+});
+
+// Vérification des mises à jour
+var VERSION_ACTUELLE = '1.0.0';
+function verifierMaj() {
+  var box = document.getElementById('maj-box');
+  box.style.display = 'block';
+  box.style.background = '#f4f6f9';
+  box.style.border = '1px solid #e0e0e0';
+  box.style.color = '#6b6b6b';
+  box.innerHTML = '⏳ Vérification en cours...';
+  if (!dbPlatform) { box.innerHTML = '⚠️ Base de données non disponible.'; return; }
+  var url = dbPlatform.getConfig('update_url');
+  if (!url) {
+    box.innerHTML = '⚠️ Aucune URL de mise à jour configurée.<br>Contactez votre administrateur APLMGEST.';
+    return;
+  }
+  fetch(url, { cache: 'no-store' })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var vActuelle = VERSION_ACTUELLE.split('.').map(Number);
+      var vDispo = (data.version || '0').split('.').map(Number);
+      var estPlusRecente = false;
+      for (var i = 0; i < 3; i++) {
+        var a = vActuelle[i] || 0, b = vDispo[i] || 0;
+        if (b > a) { estPlusRecente = true; break; }
+        if (a > b) break;
+      }
+      if (estPlusRecente) {
+        var notes = (data.notes || '').split('\n').filter(Boolean).map(function(l){ return '<li>' + l.replace(/^[-•]\s*/,'') + '</li>'; }).join('');
+        var liens = '';
+        if (data.download_windows) liens += '<button onclick="majInstaller(\''+data.download_windows.replace(/'/g,"\\'")+'\',\'windows\')" style="background:#185FA5;color:#fff;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-right:8px">⬇ Mettre à jour — Windows</button>';
+        if (data.download_mac) liens += '<button onclick="majInstaller(\''+data.download_mac.replace(/'/g,"\\'")+'\',\'mac\')" style="background:#185FA5;color:#fff;border:none;border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer">⬇ Mettre à jour — macOS</button>';
+        box.style.background = '#E6F6F1';
+        box.style.border = '1px solid #1D9E75';
+        box.style.color = '#0F6E56';
+        box.innerHTML = '<strong>Mise à jour disponible — v' + data.version + '</strong> (' + (data.date||'') + ')'
+          + (notes ? '<ul style="margin:6px 0 6px 16px">' + notes + '</ul>' : '')
+          + '<div style="margin-top:6px">' + liens + '</div>';
+      } else {
+        box.style.background = '#f4f6f9';
+        box.style.border = '1px solid #e0e0e0';
+        box.style.color = '#6b6b6b';
+        box.innerHTML = '✓ Vous avez la dernière version (v' + VERSION_ACTUELLE + ').';
+      }
+    })
+    .catch(function(err) {
+      box.style.background = '#FFF0F0';
+      box.style.border = '1px solid #F7C1C1';
+      box.style.color = '#A32D2D';
+      box.innerHTML = '✗ Impossible de vérifier : ' + (err.message || 'Vérifiez votre connexion internet.');
+    });
+}
+
+var _majDl = false;
+function majInstaller(url, plateforme) {
+  if (!url) { showErr('Lien de téléchargement non disponible.'); return; }
+  if (_majDl) return;
+  _majDl = true;
+
+  var https = require('https');
+  var http  = require('http');
+  var path  = require('path');
+  var fs    = require('fs');
+  var os    = require('os');
+  var ipcRenderer = require('electron').ipcRenderer;
+
+  var isWin = process.platform === 'win32';
+  var ext   = (plateforme === 'mac' || (!isWin && plateforme !== 'windows')) ? '.dmg' : '.exe';
+  var dest  = path.join(os.tmpdir(), 'aplmgest-update' + ext);
+
+  var box = document.getElementById('maj-box');
+  function prog(pct, msg) {
+    box.style.display = 'block';
+    box.style.background = pct < 0 ? '#FFF0F0' : '#f4f6f9';
+    box.style.border = '1px solid ' + (pct < 0 ? '#F7C1C1' : '#e0e0e0');
+    box.style.color = pct < 0 ? '#A32D2D' : '#333';
+    var barHtml = pct >= 0 ? '<div style="background:#e0e0e0;border-radius:20px;height:8px;margin-top:8px;overflow:hidden"><div style="background:#185FA5;height:100%;width:'+pct+'%;border-radius:20px;transition:width .3s"></div></div>' : '';
+    box.innerHTML = msg + barHtml;
+  }
+
+  prog(0, '⏳ Connexion au serveur…');
+
+  function doGet(downloadUrl) {
+    var proto = downloadUrl.startsWith('https') ? https : http;
+    proto.get(downloadUrl, function(res) {
+      if (res.statusCode === 301 || res.statusCode === 302) { doGet(res.headers.location); return; }
+      if (res.statusCode !== 200) { _majDl = false; prog(-1, '✗ Erreur serveur (' + res.statusCode + ')'); return; }
+      var total = parseInt(res.headers['content-length'] || '0');
+      var recu = 0;
+      var file = fs.createWriteStream(dest);
+      res.on('data', function(c) {
+        recu += c.length;
+        if (total > 0) prog(Math.round(recu/total*100), '⏳ Téléchargement… ' + Math.round(recu/total*100) + '%');
+      });
+      res.pipe(file);
+      file.on('finish', function() {
+        file.close(); _majDl = false;
+        prog(100, '✓ Téléchargé ! Installation en cours… L\'application va redémarrer.');
+        setTimeout(function() { ipcRenderer.send('run-update', dest); }, 800);
+      });
+      file.on('error', function(e) { _majDl = false; prog(-1, '✗ Erreur écriture : ' + e.message); });
+    }).on('error', function(e) { _majDl = false; prog(-1, '✗ Erreur réseau : ' + e.message); });
+  }
+  doGet(url);
+}
+
+// Connexion utilisateur entreprise
+document.getElementById('formUser').addEventListener('submit', function(e) {
+  e.preventDefault();
+  hideErr();
+  if (!dbCompany || !selectedSlug) { showErr("Entreprise non sélectionnée."); return; }
+  var pseudo = document.getElementById('u_pseudo').value.trim();
+  var mdp = document.getElementById('u_mdp').value;
+  if (!pseudo || !mdp) { showErr("Veuillez remplir tous les champs."); return; }
+  try {
+    var user = dbCompany.verifyUser(selectedSlug, pseudo, mdp);
+    if (!user) { showErr("Pseudo ou mot de passe incorrect, ou compte inactif."); return; }
+    var entInfo = dbPlatform ? dbPlatform.getEntrepriseBySlug(selectedSlug) : {};
+    var modules = {};
+    try { modules = JSON.parse((entInfo && entInfo.modules) || '{}'); } catch(_) {}
+    localStorage.setItem('aplmgest_session', JSON.stringify({
+      type: 'utilisateur',
+      slug: selectedSlug,
+      entreprise_nom: (entInfo && entInfo.nom) || '',
+      id: user.id,
+      pseudo: user.pseudo,
+      nom_complet: user.nom_complet || user.pseudo,
+      role: user.role,
+      email: user.email || '',
+      telephone: user.telephone || '',
+      service: user.service || '',
+      modules: modules
+    }));
+    window.location.href = 'APLM_BUZNESS_TRAVEL_v2.html';
+  } catch(e) { showErr("Erreur connexion : " + e.message); }
+});
+</script>
+</body>
+</html>

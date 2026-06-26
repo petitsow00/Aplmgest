@@ -1,0 +1,82 @@
+{
+  "name": "aplmgest",
+  "version": "1.0.0",
+  "description": "Plateforme de gestion multi-entreprises APLMGEST",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:win32": "electron-builder --win --ia32",
+    "build:mac": "electron-builder --mac",
+    "build:all": "electron-builder --win --mac"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.4",
+    "electron": "^42.5.0",
+    "electron-builder": "^26.0.3"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^12.11.1",
+    "electron-store": "^11.0.2"
+  },
+  "build": {
+    "appId": "com.aplmgest.platform",
+    "productName": "APLMGEST",
+    "copyright": "Copyright © 2026 APLMGEST",
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/better-sqlite3/**",
+      "node_modules/bcrypt/**",
+      "node_modules/node-gyp-build/**"
+    ],
+    "files": [
+      "**/*",
+      "!dist/**",
+      "!companies/**",
+      "!aplmgest_platform.db",
+      "!database.js",
+      "!*.md",
+      "!**/{.git,.gitignore}",
+      "!**/node_modules/*/{README.md,CHANGELOG.md,test,__tests__,tests,example,examples}",
+      "!**/node_modules/.bin"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "category": "public.app-category.business"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "APLMGEST",
+      "deleteAppDataOnUninstall": false
+    },
+    "dmg": {
+      "title": "APLMGEST",
+      "contents": [
+        { "x": 130, "y": 220 },
+        { "x": 410, "y": 220, "type": "link", "path": "/Applications" }
+      ]
+    }
+  }
+}

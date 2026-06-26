@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APLMGEST — Super Administration</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f4f6f9;--card:#fff;--bd:#e2e8f0;--t1:#1a202c;--t2:#718096;--t3:#a0aec0;--blue:#185FA5;--bluL:#EBF4FF;--grn:#1D9E75;--grnL:#E6F6F1;--red:#E24B4A;--redL:#FFF0F0;--amb:#EF9F27;--ambL:#FFF8ED;--r:10px;--sh:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:var(--t1);background:var(--bg);min-height:100vh}
+.topbar{background:linear-gradient(135deg,#0d2137,#185FA5);color:#fff;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-logo{font-size:17px;font-weight:800;letter-spacing:-.3px}
+.topbar-badge{background:rgba(255,255,255,.18);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-user{font-size:13px;opacity:.85}
+.btn-logout{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:7px;padding:5px 12px;cursor:pointer;font-size:12px;font-weight:600;transition:background .15s}
+.btn-logout:hover{background:rgba(255,255,255,.25)}
+.layout{display:flex;min-height:calc(100vh - 56px)}
+.sidebar{width:210px;background:var(--card);border-right:1px solid var(--bd);padding:16px 0;flex-shrink:0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;color:var(--t2);font-size:13.5px;font-weight:500;transition:all .12s;border-radius:0}
+.nav-item:hover{background:var(--bluL);color:var(--blue)}
+.nav-item.active{background:var(--bluL);color:var(--blue);font-weight:700;border-right:3px solid var(--blue)}
+.nav-item i{font-size:16px;width:18px}
+.nav-section{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;padding:14px 18px 5px}
+.main{flex:1;padding:24px;overflow-y:auto}
+.page{display:none}
+.page.active{display:block}
+.page-title{font-size:20px;font-weight:800;color:var(--t1);margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--t2);margin-bottom:20px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--card);border-radius:var(--r);padding:18px;border:1px solid var(--bd);box-shadow:var(--sh)}
+.stat-icon{font-size:22px;margin-bottom:8px}
+.stat-val{font-size:28px;font-weight:800;line-height:1}
+.stat-label{font-size:12px;color:var(--t2);margin-top:5px}
+.card{background:var(--card);border-radius:var(--r);border:1px solid var(--bd);box-shadow:var(--sh)}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:14px;font-weight:700}
+.card-body{padding:18px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;padding:9px 12px;font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bd);background:#fafafa}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:#fafcff}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.bg-actif{background:var(--grnL);color:#0F6E56}
+.bg-suspendu{background:var(--ambL);color:#854F0B}
+.bg-expire{background:var(--redL);color:#A32D2D}
+.bg-standard{background:var(--bluL);color:var(--blue)}
+.bg-pro{background:#F3E8FF;color:#6B21A8}
+.bg-premium{background:#FFF8ED;color:#92400E}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:#0C447C}
+.btn-success{background:var(--grn);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+.btn-ghost{background:transparent;border:1px solid var(--bd);color:var(--t2)}
+.btn-ghost:hover{background:var(--bg);border-color:var(--t3)}
+.btn-sm{padding:4px 10px;font-size:12px}
+.actions{display:flex;gap:6px}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center}
+.mo.open{display:flex}
+.md{background:var(--card);border-radius:14px;padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.md-title{font-size:17px;font-weight:800;margin-bottom:18px;color:var(--t1)}
+.fg{margin-bottom:14px}
+label.fl{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.fi{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:8px;font-size:13.5px;color:var(--t1);font-family:inherit;outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,95,165,.1)}
+.fsl{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:8px;font-size:13.5px;color:var(--t1);font-family:inherit;outline:none;background:#fff}
+.fsl:focus{border-color:var(--blue)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mf{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--bd)}
+.mod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.mod-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1.5px solid var(--bd);border-radius:8px;cursor:pointer;transition:all .15s}
+.mod-item input[type=checkbox]{cursor:pointer;width:15px;height:15px}
+.mod-item label{cursor:pointer;font-size:13px;font-weight:500;flex:1}
+.mod-item.on{border-color:var(--blue);background:var(--bluL)}
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px}
+.alert-warning{background:var(--ambL);color:#854F0B;border:1px solid #FAC775}
+.log-line{padding:9px 0;border-bottom:1px solid var(--bd);display:flex;gap:12px;font-size:12.5px}
+.log-line:last-child{border-bottom:none}
+.log-time{color:var(--t3);white-space:nowrap;flex-shrink:0}
+.log-action{font-weight:600;color:var(--t1)}
+.log-det{color:var(--t2)}
+.empty{text-align:center;padding:40px;color:var(--t3);font-size:13px}
+.empty i{font-size:36px;display:block;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-logo">✈ APLMGEST</span>
+    <span class="topbar-badge">🛡️ SUPER ADMINISTRATION</span>
+  </div>
+  <div class="topbar-right">
+    <span class="topbar-user" id="sa_name">Super Admin</span>
+    <button class="btn-logout" onclick="deconnecter()">Se déconnecter</button>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="nav-section">Tableau de bord</div>
+    <div class="nav-item active" data-page="pg-dash"><i class="ti ti-layout-dashboard"></i>Vue d'ensemble</div>
+    <div class="nav-section">Gestion</div>
+    <div class="nav-item" data-page="pg-entreprises"><i class="ti ti-building"></i>Entreprises</div>
+    <div class="nav-item" data-page="pg-licences"><i class="ti ti-license"></i>Licences</div>
+    <div class="nav-section">Sécurité</div>
+    <div class="nav-item" data-page="pg-journal"><i class="ti ti-list-details"></i>Journal d'activité</div>
+    <div class="nav-item" data-page="pg-compte"><i class="ti ti-user-cog"></i>Mon compte</div>
+    <div class="nav-section">Déploiement</div>
+    <div class="nav-item" data-page="pg-updates"><i class="ti ti-refresh-alert"></i>Mises à jour</div>
+    <div class="nav-section">Maintenance</div>
+    <div class="nav-item" data-page="pg-reset" style="color:var(--red)"><i class="ti ti-alert-triangle"></i>Réinitialisation</div>
+  </nav>
+
+  <main class="main">
+
+    <!-- TABLEAU DE BORD -->
+    <div class="page active" id="pg-dash">
+      <div class="page-title">Tableau de bord</div>
+      <div class="page-sub" id="dash-date"></div>
+      <div class="g4">
+        <div class="stat-card">
+          <div class="stat-icon">🏢</div>
+          <div class="stat-val" id="st-total">0</div>
+          <div class="stat-label">Entreprises total</div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid var(--grn)">
+          <div class="stat-icon">✅</div>
+          <div class="stat-val" style="color:var(--grn)" id="st-actives">0</div>
+          <div class="stat-label">Actives</div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid var(--amb)">
+          <div class="stat-icon">⏸️</div>
+          <div class="stat-val" style="color:var(--amb)" id="st-suspendues">0</div>
+          <div class="stat-label">Suspendues</div>
+        </div>
+        <div class="stat-card" style="border-left:4px solid var(--red)">
+          <div class="stat-icon">⛔</div>
+          <div class="stat-val" style="color:var(--red)" id="st-expirees">0</div>
+          <div class="stat-label">Expirées</div>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Entreprises récentes</span></div>
+          <div class="card-body" id="dash-recent">
+            <div class="empty"><i class="ti ti-building-off"></i>Aucune entreprise</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Dernières actions</span></div>
+          <div class="card-body" id="dash-journal" style="max-height:260px;overflow-y:auto">
+            <div class="empty"><i class="ti ti-list-off"></i>Aucune action</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTREPRISES -->
+    <div class="page" id="pg-entreprises">
+      <div class="page-title">Gestion des entreprises</div>
+      <div class="page-sub">Créer, modifier, suspendre ou supprimer des espaces clients</div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+        <button class="btn btn-primary" onclick="openModalCreer()"><i class="ti ti-plus"></i>Nouvelle entreprise</button>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0;overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Entreprise</th><th>Secteur</th><th>Licence</th><th>Expiration</th><th>Statut</th><th>Modules</th><th>Actions</th></tr></thead>
+            <tbody id="tbl-entreprises"><tr><td colspan="7" class="empty">Aucune entreprise enregistrée</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- LICENCES -->
+    <div class="page" id="pg-licences">
+      <div class="page-title">Gestion des licences</div>
+      <div class="page-sub">Suivi des abonnements et renouvellements</div>
+      <div class="card">
+        <div class="card-body" style="padding:0;overflow-x:auto">
+          <table class="tbl">
+            <thead><tr><th>Entreprise</th><th>Type</th><th>Activation</th><th>Expiration</th><th>Statut</th><th>Renouveler</th></tr></thead>
+            <tbody id="tbl-licences"><tr><td colspan="6" class="empty">Aucune licence</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOURNAL -->
+    <div class="page" id="pg-journal">
+      <div class="page-title">Journal d'activité</div>
+      <div class="page-sub">Historique des actions sur la plateforme</div>
+      <div class="card">
+        <div class="card-body" id="journal-body">
+          <div class="empty"><i class="ti ti-list-off"></i>Aucune action enregistrée</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MON COMPTE -->
+    <div class="page" id="pg-compte">
+      <div class="page-title">Mon compte</div>
+      <div class="page-sub">Paramètres du compte Super Administrateur</div>
+      <div class="card" style="max-width:440px">
+        <div class="card-header"><span class="card-title">Changer le mot de passe</span></div>
+        <div class="card-body">
+          <div class="fg"><label class="fl">Mot de passe actuel</label><input class="fi" type="password" id="mdp_actuel" placeholder="••••••••"></div>
+          <div class="fg"><label class="fl">Nouveau mot de passe</label><input class="fi" type="password" id="mdp_nouveau" placeholder="••••••••"></div>
+          <div class="fg"><label class="fl">Confirmer</label><input class="fi" type="password" id="mdp_confirm" placeholder="••••••••"></div>
+          <button class="btn btn-primary" onclick="changerMdp()"><i class="ti ti-key"></i>Changer le mot de passe</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RÉINITIALISATION -->
+    <div class="page" id="pg-reset">
+      <div class="page-title" style="color:var(--red)">Réinitialisation</div>
+      <div class="page-sub">Actions irréversibles — lisez attentivement avant de continuer</div>
+
+      <div class="alert alert-warning" style="max-width:680px;margin-bottom:20px">
+        <strong>⚠ Attention :</strong> Ces actions suppriment définitivement des données. Elles ne peuvent pas être annulées.
+        Assurez-vous d'avoir une sauvegarde si nécessaire.
+      </div>
+
+      <!-- Card: Reset une entreprise -->
+      <div class="card" style="max-width:680px;margin-bottom:16px">
+        <div class="card-header" style="border-left:4px solid var(--amb)">
+          <span class="card-title">🔄 Réinitialiser les données d'une entreprise</span>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--t2);margin-bottom:14px">
+            Supprime toutes les données opérationnelles d'une entreprise (clients, dossiers, caisse, factures…)
+            <br>mais <strong>conserve les utilisateurs et les paramètres</strong> de l'entreprise.
+          </p>
+          <div class="fg"><label class="fl">Choisir l'entreprise</label>
+            <select class="fsl" id="rst_slug">
+              <option value="">— Sélectionner une entreprise —</option>
+            </select>
+          </div>
+          <button class="btn btn-danger" onclick="resetEntreprise()" style="background:var(--amb);color:#fff">
+            <i class="ti ti-eraser"></i>Réinitialiser les données
+          </button>
+        </div>
+      </div>
+
+      <!-- Card: Reset complet plateforme -->
+      <div class="card" style="max-width:680px">
+        <div class="card-header" style="border-left:4px solid var(--red)">
+          <span class="card-title" style="color:var(--red)">⛔ Réinitialisation complète de la plateforme</span>
+        </div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--t2);margin-bottom:14px">
+            Supprime <strong>toutes les entreprises</strong>, toutes leurs bases de données, et tout le journal d'activité.
+            <br>Seul le compte <strong>Super Administrateur</strong> est conservé. La plateforme revient à l'état initial.
+          </p>
+          <div class="fg"><label class="fl">Confirmez en tapant : <code>REINITIALISER</code></label>
+            <input class="fi" id="rst_confirm" placeholder="Tapez REINITIALISER pour confirmer" autocomplete="off">
+          </div>
+          <button class="btn btn-danger" onclick="resetPlatformComplet()">
+            <i class="ti ti-trash"></i>Réinitialiser toute la plateforme
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MISES À JOUR -->
+    <div class="page" id="pg-updates">
+      <div class="page-title">Mises à jour</div>
+      <div class="page-sub">Publiez des mises à jour que vos clients peuvent télécharger depuis internet</div>
+
+      <div class="card" style="max-width:640px;margin-bottom:16px">
+        <div class="card-header"><span class="card-title"><i class="ti ti-link"></i> URL du fichier de mise à jour</span></div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--t2);margin-bottom:14px">
+            Hébergez un fichier <strong>version.json</strong> en ligne et entrez son adresse ci-dessous.
+            Vos clients utiliseront cette adresse pour savoir si une mise à jour est disponible.
+          </p>
+          <div class="fg"><label class="fl">URL du fichier version.json</label>
+            <input class="fi" type="url" id="upd_url" placeholder="https://raw.githubusercontent.com/votre-repo/version.json">
+          </div>
+          <button class="btn btn-primary" onclick="sauvegarderUrlUpdate()"><i class="ti ti-device-floppy"></i>Enregistrer l'URL</button>
+          <span id="upd_url_ok" style="display:none;margin-left:10px;color:var(--grn);font-size:13px;font-weight:600">✓ URL enregistrée</span>
+        </div>
+      </div>
+
+      <div class="card" style="max-width:640px;margin-bottom:16px">
+        <div class="card-header"><span class="card-title"><i class="ti ti-package"></i> Générer le fichier version.json</span></div>
+        <div class="card-body">
+          <div class="fr">
+            <div class="fg"><label class="fl">Numéro de version *</label>
+              <input class="fi" id="upd_version" placeholder="1.0.1">
+            </div>
+            <div class="fg"><label class="fl">Date de publication</label>
+              <input class="fi" type="date" id="upd_date">
+            </div>
+          </div>
+          <div class="fg"><label class="fl">Notes (une ligne par correction)</label>
+            <textarea class="fi" id="upd_notes" rows="4" placeholder="- Correction du bug de connexion&#10;- Amélioration de la facturation&#10;- Nouvelle fonctionnalité X" style="resize:vertical;font-family:inherit;font-size:13px;padding:8px 12px"></textarea>
+          </div>
+          <div class="fg"><label class="fl">Lien téléchargement Windows (.exe)</label>
+            <input class="fi" id="upd_win" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="fg"><label class="fl">Lien téléchargement macOS (.dmg) — optionnel</label>
+            <input class="fi" id="upd_mac" placeholder="https://drive.google.com/...">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="genererJson()"><i class="ti ti-code"></i>Générer le JSON</button>
+            <button class="btn btn-ghost" onclick="copierJson()" id="btn-copy-json" style="display:none"><i class="ti ti-copy"></i>Copier le JSON</button>
+          </div>
+          <div id="upd_json_box" style="display:none;margin-top:16px">
+            <label class="fl" style="margin-bottom:6px;display:block">Contenu à placer dans votre fichier <strong>version.json</strong> en ligne :</label>
+            <pre id="upd_json_pre" style="background:#f4f6f9;border:1px solid var(--bd);border-radius:8px;padding:14px;font-size:12px;overflow-x:auto;white-space:pre-wrap;line-height:1.6"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="max-width:640px">
+        <div class="card-header"><span class="card-title"><i class="ti ti-help-circle"></i> Comment publier une mise à jour ?</span></div>
+        <div class="card-body" style="font-size:13px;color:var(--t2);line-height:1.9">
+          <ol style="padding-left:20px;margin-bottom:14px">
+            <li>Faites vos modifications dans le code de l'application</li>
+            <li>Modifiez le numéro de version dans <code>package.json</code> (ex: 1.0.1)</li>
+            <li>Reconstruisez l'installateur : <code>npm run build:win</code></li>
+            <li>Hébergez le nouveau fichier <strong>.exe</strong> en ligne (Google Drive, Dropbox, GitHub…)</li>
+            <li>Copiez le lien de téléchargement direct et remplissez le formulaire ci-dessus</li>
+            <li>Cliquez <strong>Générer le JSON</strong>, copiez-le et mettez à jour votre fichier <strong>version.json</strong> en ligne</li>
+            <li>Vos clients verront une notification de mise à jour disponible</li>
+          </ol>
+          <div style="background:var(--bluL);border-radius:8px;padding:12px 16px;color:var(--blue)">
+            <strong>Conseil gratuit :</strong> Utilisez <strong>GitHub Gist</strong> — créez un fichier <code>version.json</code>,
+            cliquez sur le bouton <em>"Raw"</em> et copiez cette URL ici. C'est gratuit et instantané.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL : Créer / Modifier entreprise -->
+<div class="mo" id="mo-ent">
+  <div class="md">
+    <div class="md-title" id="mo-ent-title">Nouvelle entreprise</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Nom de l'entreprise *</label><input class="fi" id="ent_nom" placeholder="Ex: Agence Voyage Dakar"></div>
+      <div class="fg"><label class="fl">Secteur d'activité</label><input class="fi" id="ent_secteur" placeholder="Voyage, Transport..."></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Téléphone</label><input class="fi" id="ent_tel" placeholder="+221 XX XXX XX XX"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="ent_email" placeholder="contact@..."></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Adresse</label><input class="fi" id="ent_adresse" placeholder="Ville, Pays"></div>
+      <div class="fg"><label class="fl">Pays</label><input class="fi" id="ent_pays" placeholder="Sénégal" value="Sénégal"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Type de licence</label>
+        <select class="fsl" id="ent_licence">
+          <option value="Standard">Standard</option>
+          <option value="Pro">Pro</option>
+          <option value="Premium">Premium</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Date d'expiration</label><input class="fi" type="date" id="ent_expiration"></div>
+    </div>
+    <div class="fg"><label class="fl">Modules activés</label>
+      <div class="mod-grid" id="modules-grid"></div>
+    </div>
+    <div class="fg"><label class="fl">— Compte administrateur de l'entreprise —</label></div>
+    <div id="admin-section">
+      <div class="fr">
+        <div class="fg"><label class="fl">Pseudo admin</label><input class="fi" id="ent_admin_pseudo" placeholder="admin"></div>
+        <div class="fg"><label class="fl">Mot de passe admin</label><input class="fi" type="password" id="ent_admin_mdp" placeholder="Admin123!"></div>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Notes</label><input class="fi" id="ent_notes" placeholder="Remarques..."></div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeModal('mo-ent')">Annuler</button>
+      <button class="btn btn-primary" onclick="sauvegarderEntreprise()"><i class="ti ti-check"></i>Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL : Modules (édition) -->
+<div class="mo" id="mo-modules">
+  <div class="md">
+    <div class="md-title">Modules — <span id="mod-ent-nom"></span></div>
+    <div class="mod-grid" id="mod-edit-grid"></div>
+    <div class="mf">
+      <button class="btn btn-ghost" onclick="closeModal('mo-modules')">Annuler</button>
+      <button class="btn btn-primary" onclick="sauvegarderModules()"><i class="ti ti-check"></i>Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var dbPlatform = null;
+var dbCompany = null;
+var session = null;
+var editingEntId = null;
+var editingModSlug = null;
+
+var MODULES_DEF = [
+  {key:'crm',label:'🤝 CRM / Relation client'},
+  {key:'finance',label:'💰 Caisse & Finance'},
+  {key:'facturation',label:'🧾 Facturation'},
+  {key:'devis',label:'📋 Devis & Estimations'},
+  {key:'billetterie',label:'✈ Billetterie'},
+  {key:'visa',label:'🛂 Visa & Procédures'},
+  {key:'oumrah',label:'🕌 Oumrah / Pèlerinage'},
+  {key:'transfert',label:'💸 Transferts d\'argent'},
+  {key:'hotel',label:'🏨 Réservations hôtel'},
+  {key:'assurance',label:'🛡 Assurance voyage'},
+  {key:'stock',label:'📦 Gestion de stock'},
+  {key:'comptabilite',label:'📊 Comptabilité SYSCOHADA'},
+  {key:'rh',label:'👥 Ressources humaines'},
+];
+
+try { dbPlatform = require('./db-platform'); } catch(e) { alert('Erreur db-platform : ' + e.message); }
+try { dbCompany = require('./db-company'); } catch(e) {}
+
+// Vérification session
+try {
+  session = JSON.parse(localStorage.getItem('aplmgest_session') || 'null');
+  if (!session || session.type !== 'superadmin') {
+    window.location.href = 'login.html';
+  } else {
+    document.getElementById('sa_name').textContent = session.nom_complet || session.pseudo;
+  }
+} catch(e) { window.location.href = 'login.html'; }
+
+// Navigation
+document.querySelectorAll('.nav-item[data-page]').forEach(function(el) {
+  el.addEventListener('click', function() {
+    document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+    el.classList.add('active');
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+    var pg = document.getElementById(el.dataset.page);
+    if (pg) pg.classList.add('active');
+    if (el.dataset.page === 'pg-dash') loadDash();
+    if (el.dataset.page === 'pg-entreprises') loadEntreprises();
+    if (el.dataset.page === 'pg-licences') loadLicences();
+    if (el.dataset.page === 'pg-journal') loadJournal();
+    if (el.dataset.page === 'pg-updates') loadUpdates();
+    if (el.dataset.page === 'pg-reset') loadReset();
+  });
+});
+
+// Init
+document.getElementById('dash-date').textContent = new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+loadDash();
+
+// ─── Dashboard ──────────────────────────────────────────────────────────────
+
+function loadDash() {
+  if (!dbPlatform) return;
+  var stats = dbPlatform.getStatsPlatform();
+  document.getElementById('st-total').textContent = stats.total;
+  document.getElementById('st-actives').textContent = stats.actives;
+  document.getElementById('st-suspendues').textContent = stats.suspendues;
+  document.getElementById('st-expirees').textContent = stats.expirees;
+
+  var all = dbPlatform.getAllEntreprises();
+  var recent = all.slice(-5).reverse();
+  var rEl = document.getElementById('dash-recent');
+  if (recent.length === 0) {
+    rEl.innerHTML = '<div class="empty"><i class="ti ti-building-off"></i>Aucune entreprise</div>';
+  } else {
+    rEl.innerHTML = recent.map(function(e) {
+      var sc = e.statut === 'Actif' ? 'bg-actif' : e.statut === 'Suspendu' ? 'bg-suspendu' : 'bg-expire';
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)">' +
+        '<div><div style="font-weight:600">' + esc(e.nom) + '</div><div style="font-size:12px;color:var(--t2)">' + esc(e.secteur||'—') + '</div></div>' +
+        '<span class="badge ' + sc + '">' + e.statut + '</span></div>';
+    }).join('');
+  }
+
+  var logs = dbPlatform.getJournalPlatform(10);
+  var jEl = document.getElementById('dash-journal');
+  if (logs.length === 0) {
+    jEl.innerHTML = '<div class="empty"><i class="ti ti-list-off"></i>Aucune action</div>';
+  } else {
+    jEl.innerHTML = logs.map(function(l) {
+      return '<div class="log-line"><span class="log-time">' + fmtDate(l.created_at) + '</span>' +
+        '<div><span class="log-action">' + esc(l.action) + '</span> — <span class="log-det">' + esc(l.details) + '</span></div></div>';
+    }).join('');
+  }
+}
+
+// ─── Entreprises ─────────────────────────────────────────────────────────────
+
+function loadEntreprises() {
+  if (!dbPlatform) return;
+  var liste = dbPlatform.getAllEntreprises();
+  var tbody = document.getElementById('tbl-entreprises');
+  if (liste.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">Aucune entreprise enregistrée</td></tr>';
+    return;
+  }
+  tbody.innerHTML = liste.map(function(e) {
+    var sc = e.statut === 'Actif' ? 'bg-actif' : e.statut === 'Suspendu' ? 'bg-suspendu' : 'bg-expire';
+    var lc = e.type_licence === 'Premium' ? 'bg-premium' : e.type_licence === 'Pro' ? 'bg-pro' : 'bg-standard';
+    var mods = {};
+    try { mods = JSON.parse(e.modules||'{}'); } catch(_){}
+    var nbMods = Object.values(mods).filter(Boolean).length;
+    var exp = e.date_expiration ? e.date_expiration : '—';
+    var expClass = '';
+    if (e.date_expiration) {
+      var diff = Math.ceil((new Date(e.date_expiration) - new Date()) / 86400000);
+      if (diff < 0) expClass = 'color:var(--red);font-weight:700';
+      else if (diff <= 30) expClass = 'color:var(--amb);font-weight:700';
+    }
+    return '<tr>' +
+      '<td><div style="font-weight:600">' + esc(e.nom) + '</div><div style="font-size:11px;color:var(--t2)">' + esc(e.slug) + '</div></td>' +
+      '<td>' + esc(e.secteur||'—') + '</td>' +
+      '<td><span class="badge ' + lc + '">' + e.type_licence + '</span></td>' +
+      '<td style="' + expClass + '">' + exp + '</td>' +
+      '<td><span class="badge ' + sc + '">' + e.statut + '</span></td>' +
+      '<td><button class="btn btn-ghost btn-sm" onclick="openModules(\'' + e.slug + '\',\'' + esc(e.nom) + '\')">' + nbMods + ' modules</button></td>' +
+      '<td><div class="actions">' +
+        '<button class="btn btn-ghost btn-sm" onclick="openModalEditer(' + e.id + ')" title="Modifier"><i class="ti ti-pencil"></i></button>' +
+        (e.statut === 'Actif'
+          ? '<button class="btn btn-ghost btn-sm" style="color:var(--amb)" onclick="changerStatut(' + e.id + ',\'Suspendu\')" title="Suspendre"><i class="ti ti-pause"></i></button>'
+          : '<button class="btn btn-ghost btn-sm" style="color:var(--grn)" onclick="changerStatut(' + e.id + ',\'Actif\')" title="Activer"><i class="ti ti-play"></i></button>') +
+        '<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="supprimerEntreprise(' + e.id + ',\'' + esc(e.nom) + '\')" title="Supprimer"><i class="ti ti-trash"></i></button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function openModalCreer() {
+  editingEntId = null;
+  document.getElementById('mo-ent-title').textContent = 'Nouvelle entreprise';
+  document.getElementById('admin-section').style.display = '';
+  ['ent_nom','ent_secteur','ent_tel','ent_email','ent_adresse','ent_notes','ent_admin_pseudo','ent_admin_mdp'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.value = '';
+  });
+  document.getElementById('ent_pays').value = 'Sénégal';
+  document.getElementById('ent_licence').value = 'Standard';
+  document.getElementById('ent_admin_pseudo').value = 'admin';
+  document.getElementById('ent_admin_mdp').value = 'Admin123!';
+  buildModulesGrid('modules-grid', null);
+  openModal('mo-ent');
+}
+
+function openModalEditer(id) {
+  if (!dbPlatform) return;
+  var e = dbPlatform.getEntrepriseById(id);
+  if (!e) return;
+  editingEntId = id;
+  document.getElementById('mo-ent-title').textContent = 'Modifier — ' + e.nom;
+  document.getElementById('admin-section').style.display = 'none';
+  document.getElementById('ent_nom').value = e.nom || '';
+  document.getElementById('ent_secteur').value = e.secteur || '';
+  document.getElementById('ent_tel').value = e.telephone || '';
+  document.getElementById('ent_email').value = e.email || '';
+  document.getElementById('ent_adresse').value = e.adresse || '';
+  document.getElementById('ent_pays').value = e.pays || 'Sénégal';
+  document.getElementById('ent_licence').value = e.type_licence || 'Standard';
+  document.getElementById('ent_expiration').value = e.date_expiration || '';
+  document.getElementById('ent_notes').value = e.notes || '';
+  var mods = {};
+  try { mods = JSON.parse(e.modules||'{}'); } catch(_){}
+  buildModulesGrid('modules-grid', mods);
+  openModal('mo-ent');
+}
+
+function buildModulesGrid(gridId, current) {
+  var grid = document.getElementById(gridId);
+  grid.innerHTML = MODULES_DEF.map(function(m) {
+    var checked = current ? (current[m.key] !== false) : true;
+    return '<div class="mod-item' + (checked?' on':'') + '" onclick="toggleMod(this)">' +
+      '<input type="checkbox" id="mod_' + m.key + '" ' + (checked?'checked':'') + ' onchange="this.closest(\'.mod-item\').classList.toggle(\'on\',this.checked)">' +
+      '<label for="mod_' + m.key + '">' + m.label + '</label>' +
+      '</div>';
+  }).join('');
+}
+
+function toggleMod(el) {
+  var cb = el.querySelector('input[type=checkbox]');
+  if (cb) { cb.checked = !cb.checked; el.classList.toggle('on', cb.checked); }
+}
+
+function readModules(gridId) {
+  var mods = {};
+  MODULES_DEF.forEach(function(m) {
+    var el = document.querySelector('#' + gridId + ' #mod_' + m.key);
+    mods[m.key] = el ? el.checked : false;
+  });
+  return mods;
+}
+
+function sauvegarderEntreprise() {
+  if (!dbPlatform) return;
+  var nom = document.getElementById('ent_nom').value.trim();
+  if (!nom) { alert('Le nom de l\'entreprise est obligatoire.'); return; }
+  var modules = readModules('modules-grid');
+  try {
+    if (editingEntId) {
+      dbPlatform.updateEntreprise(editingEntId, {
+        nom: nom,
+        secteur: document.getElementById('ent_secteur').value,
+        telephone: document.getElementById('ent_tel').value,
+        email: document.getElementById('ent_email').value,
+        adresse: document.getElementById('ent_adresse').value,
+        pays: document.getElementById('ent_pays').value,
+        type_licence: document.getElementById('ent_licence').value,
+        date_expiration: document.getElementById('ent_expiration').value || null,
+        notes: document.getElementById('ent_notes').value,
+        modules: modules
+      });
+    } else {
+      var result = dbPlatform.createEntreprise({
+        nom: nom,
+        secteur: document.getElementById('ent_secteur').value,
+        telephone: document.getElementById('ent_tel').value,
+        email: document.getElementById('ent_email').value,
+        adresse: document.getElementById('ent_adresse').value,
+        pays: document.getElementById('ent_pays').value,
+        type_licence: document.getElementById('ent_licence').value,
+        date_expiration: document.getElementById('ent_expiration').value || null,
+        notes: document.getElementById('ent_notes').value,
+        modules: modules
+      });
+      if (dbCompany) {
+        dbCompany.initAdminEntreprise(result.slug, {
+          pseudo: document.getElementById('ent_admin_pseudo').value.trim() || 'admin',
+          motdepasse: document.getElementById('ent_admin_mdp').value || 'Admin123!',
+          nom_complet: 'Administrateur'
+        });
+      }
+    }
+    closeModal('mo-ent');
+    loadEntreprises();
+    loadDash();
+  } catch(e) { alert('Erreur : ' + e.message); }
+}
+
+function changerStatut(id, statut) {
+  var msg = statut === 'Suspendu' ? 'Suspendre cette entreprise ?' : 'Réactiver cette entreprise ?';
+  if (!confirm(msg)) return;
+  dbPlatform.setEntrepriseStatut(id, statut);
+  loadEntreprises();
+  loadDash();
+}
+
+function supprimerEntreprise(id, nom) {
+  if (!confirm('Supprimer "' + nom + '" ?\n\nCette action supprimera toutes les données de cette entreprise. Irréversible.')) return;
+  if (!confirm('Dernière confirmation — supprimer définitivement "' + nom + '" ?')) return;
+  dbPlatform.deleteEntreprise(id);
+  loadEntreprises();
+  loadDash();
+}
+
+// ─── Modules ─────────────────────────────────────────────────────────────────
+
+function openModules(slug, nom) {
+  editingModSlug = slug;
+  document.getElementById('mod-ent-nom').textContent = nom;
+  var mods = dbPlatform.getEntrepriseModules(slug);
+  buildModulesGrid('mod-edit-grid', mods);
+  openModal('mo-modules');
+}
+
+function sauvegarderModules() {
+  if (!editingModSlug) return;
+  var mods = readModules('mod-edit-grid');
+  var ent = dbPlatform.getEntrepriseBySlug(editingModSlug);
+  if (!ent) return;
+  dbPlatform.updateEntreprise(ent.id, { modules: mods });
+  closeModal('mo-modules');
+  loadEntreprises();
+}
+
+// ─── Licences ────────────────────────────────────────────────────────────────
+
+function loadLicences() {
+  if (!dbPlatform) return;
+  var liste = dbPlatform.getAllEntreprises();
+  var tbody = document.getElementById('tbl-licences');
+  if (liste.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">Aucune licence</td></tr>';
+    return;
+  }
+  tbody.innerHTML = liste.map(function(e) {
+    var sc = e.statut === 'Actif' ? 'bg-actif' : e.statut === 'Suspendu' ? 'bg-suspendu' : 'bg-expire';
+    var lc = e.type_licence === 'Premium' ? 'bg-premium' : e.type_licence === 'Pro' ? 'bg-pro' : 'bg-standard';
+    var exp = e.date_expiration || '—';
+    var expClass = '';
+    if (e.date_expiration) {
+      var diff = Math.ceil((new Date(e.date_expiration) - new Date()) / 86400000);
+      if (diff < 0) expClass = 'color:var(--red);font-weight:700';
+      else if (diff <= 30) expClass = 'color:var(--amb);font-weight:700';
+    }
+    return '<tr><td><strong>' + esc(e.nom) + '</strong></td>' +
+      '<td><span class="badge ' + lc + '">' + e.type_licence + '</span></td>' +
+      '<td>' + (e.date_activation||'—') + '</td>' +
+      '<td style="' + expClass + '">' + exp + '</td>' +
+      '<td><span class="badge ' + sc + '">' + e.statut + '</span></td>' +
+      '<td><button class="btn btn-ghost btn-sm" onclick="openModalEditer(' + e.id + ')"><i class="ti ti-refresh"></i>Modifier</button></td></tr>';
+  }).join('');
+}
+
+// ─── Journal ─────────────────────────────────────────────────────────────────
+
+function loadJournal() {
+  if (!dbPlatform) return;
+  var logs = dbPlatform.getJournalPlatform(200);
+  var el = document.getElementById('journal-body');
+  if (logs.length === 0) {
+    el.innerHTML = '<div class="empty"><i class="ti ti-list-off"></i>Aucune action enregistrée</div>';
+    return;
+  }
+  el.innerHTML = logs.map(function(l) {
+    return '<div class="log-line">' +
+      '<span class="log-time">' + fmtDate(l.created_at) + '</span>' +
+      '<div><span class="log-action">' + esc(l.action) + '</span>' +
+      (l.entreprise_nom ? ' <span style="color:var(--blue);font-size:11px">[' + esc(l.entreprise_nom) + ']</span>' : '') +
+      ' — <span class="log-det">' + esc(l.details) + '</span></div></div>';
+  }).join('');
+}
+
+// ─── Compte ───────────────────────────────────────────────────────────────────
+
+function changerMdp() {
+  var actuel = document.getElementById('mdp_actuel').value;
+  var nouveau = document.getElementById('mdp_nouveau').value;
+  var confirm2 = document.getElementById('mdp_confirm').value;
+  if (!actuel || !nouveau) { alert('Remplissez tous les champs.'); return; }
+  if (nouveau !== confirm2) { alert('Les mots de passe ne correspondent pas.'); return; }
+  if (nouveau.length < 8) { alert('Le mot de passe doit faire au moins 8 caractères.'); return; }
+  try {
+    var sa = dbPlatform.verifySuperAdmin(session.pseudo, actuel);
+    if (!sa) { alert('Mot de passe actuel incorrect.'); return; }
+    dbPlatform.changeSuperAdminPassword(session.id, nouveau);
+    alert('Mot de passe modifié avec succès.');
+    document.getElementById('mdp_actuel').value = '';
+    document.getElementById('mdp_nouveau').value = '';
+    document.getElementById('mdp_confirm').value = '';
+  } catch(e) { alert('Erreur : ' + e.message); }
+}
+
+// ─── Réinitialisation ────────────────────────────────────────────────────────
+
+function loadReset() {
+  if (!dbPlatform) return;
+  var sel = document.getElementById('rst_slug');
+  sel.innerHTML = '<option value="">— Sélectionner une entreprise —</option>';
+  var liste = dbPlatform.getAllEntreprises();
+  liste.forEach(function(e) {
+    var opt = document.createElement('option');
+    opt.value = e.slug;
+    opt.textContent = e.nom;
+    sel.appendChild(opt);
+  });
+  document.getElementById('rst_confirm').value = '';
+}
+
+function resetEntreprise() {
+  var slug = document.getElementById('rst_slug').value;
+  if (!slug) { alert('Veuillez sélectionner une entreprise.'); return; }
+  var sel = document.getElementById('rst_slug');
+  var nom = sel.options[sel.selectedIndex].textContent;
+  if (!confirm('Réinitialiser les données de "' + nom + '" ?\n\nClients, dossiers, caisse et factures seront supprimés.\nLes utilisateurs et paramètres seront conservés.')) return;
+  if (!confirm('Dernière confirmation — réinitialiser "' + nom + '" ?')) return;
+  try {
+    if (dbCompany) dbCompany.resetCompanyData(slug);
+    dbPlatform.resetCompanyDataFromPlatform(slug);
+    alert('Données de "' + nom + '" réinitialisées avec succès.');
+    document.getElementById('rst_slug').value = '';
+    loadDash();
+  } catch(e) { alert('Erreur : ' + e.message); }
+}
+
+function resetPlatformComplet() {
+  var conf = document.getElementById('rst_confirm').value.trim();
+  if (conf !== 'REINITIALISER') {
+    alert('Veuillez taper exactement "REINITIALISER" dans le champ de confirmation.');
+    return;
+  }
+  if (!confirm('ATTENTION — Cette action va supprimer TOUTES les entreprises et leurs données.\n\nCette opération est IRRÉVERSIBLE.\n\nContinuer ?')) return;
+  if (!confirm('Dernière confirmation — réinitialiser TOUTE la plateforme ?')) return;
+  try {
+    dbPlatform.resetPlatform();
+    alert('Plateforme réinitialisée. Toutes les entreprises ont été supprimées.');
+    document.getElementById('rst_confirm').value = '';
+    loadDash();
+    loadReset();
+  } catch(e) { alert('Erreur : ' + e.message); }
+}
+
+// ─── Mises à jour ────────────────────────────────────────────────────────────
+
+function loadUpdates() {
+  if (!dbPlatform) return;
+  var url = dbPlatform.getConfig('update_url') || '';
+  document.getElementById('upd_url').value = url;
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('upd_date').value = today;
+  document.getElementById('upd_json_box').style.display = 'none';
+  document.getElementById('btn-copy-json').style.display = 'none';
+  document.getElementById('upd_url_ok').style.display = 'none';
+}
+
+function sauvegarderUrlUpdate() {
+  if (!dbPlatform) return;
+  var url = document.getElementById('upd_url').value.trim();
+  dbPlatform.setConfig('update_url', url);
+  var ok = document.getElementById('upd_url_ok');
+  ok.style.display = 'inline';
+  setTimeout(function(){ ok.style.display = 'none'; }, 3000);
+}
+
+function genererJson() {
+  var version = document.getElementById('upd_version').value.trim();
+  if (!version) { alert('Entrez un numéro de version (ex: 1.0.1)'); return; }
+  var date = document.getElementById('upd_date').value || new Date().toISOString().split('T')[0];
+  var notes = document.getElementById('upd_notes').value.trim();
+  var win = document.getElementById('upd_win').value.trim();
+  var mac = document.getElementById('upd_mac').value.trim();
+  var obj = { version: version, date: date, notes: notes };
+  if (win) obj.download_windows = win;
+  if (mac) obj.download_mac = mac;
+  var json = JSON.stringify(obj, null, 2);
+  document.getElementById('upd_json_pre').textContent = json;
+  document.getElementById('upd_json_box').style.display = 'block';
+  document.getElementById('btn-copy-json').style.display = 'inline-flex';
+}
+
+function copierJson() {
+  var txt = document.getElementById('upd_json_pre').textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(function(){
+      var btn = document.getElementById('btn-copy-json');
+      var orig = btn.innerHTML;
+      btn.innerHTML = '<i class="ti ti-check"></i>Copié !';
+      setTimeout(function(){ btn.innerHTML = orig; }, 2000);
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = txt;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('JSON copié dans le presse-papiers.');
+  }
+}
+
+// ─── Utilitaires ─────────────────────────────────────────────────────────────
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.mo').forEach(function(mo) {
+  mo.addEventListener('click', function(e) { if (e.target === mo) mo.classList.remove('open'); });
+});
+
+function deconnecter() {
+  localStorage.removeItem('aplmgest_session');
+  window.location.href = 'login.html';
+}
+
+function fmtDate(s) {
+  if (!s) return '—';
+  var d = new Date(s);
+  return d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
