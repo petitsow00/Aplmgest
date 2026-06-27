@@ -17,7 +17,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@electron/rebuild": "^4.0.4",
-    "electron": "^42.5.0",
+    "electron": "^37.0.0",
     "electron-builder": "^26.0.3"
   },
   "dependencies": {
