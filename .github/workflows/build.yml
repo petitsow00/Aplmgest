@@ -34,7 +34,7 @@ jobs:
           path: dist/*.exe
 
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-13
     steps:
       - name: Télécharger le code
         uses: actions/checkout@v4
